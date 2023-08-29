@@ -1,12 +1,18 @@
 from django.db import models
+import uuid
+from django.contrib.auth.models import User
+
 
 # Create your models here.
-class message:
-    # Sender ID
-    sender = None
-    # Receiver ID
-    receiver = None
-    # Message str
-    text = None
-    # Status (read/unread) bool
-    unread = None
+class Message(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False) 
+    created_at = models.DateTimeField(auto_now_add=True)
+    sender = models.ForeignKey(User, related_name="sent_messages", on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, related_name="received_messages", on_delete=models.CASCADE)
+    message = models.TextField(null=True, blank=True)
+    unread = models.BooleanField(default=True)
+
+class Contact(models.Model):
+    user = models.ForeignKey(User, related_name="user_contact", on_delete=models.CASCADE)
+    contact = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
